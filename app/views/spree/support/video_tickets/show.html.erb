@@ -1,0 +1,73 @@
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @video_ticket } %>
+
+<% content_for :page_title do %>
+  <% if @video_ticket.active? %>
+    <%= Spree.t(:active_video_ticket) %>
+  <% else %>
+    <%= Spree.t(:inactive_video_ticket) %>
+  <% end %>    
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if @video_ticket.pickable? %>
+    <%= button_link_to Spree.t(:pick_ticket), support_video_ticket_path(@video_ticket), { method: :put, class: "btn-warning", icon: 'add', id: 'pick_video_ticket_link' } %>
+  <% elsif @video_ticket.owner?(try_spree_current_user) && @video_ticket.open? %>
+    <%= button_link_to Spree.t(:join_chat), start_support_video_ticket_path(@video_ticket), { remote: true, method: :put, class: "btn-success", id: 'join_video_ticket_link' } %>
+  <% end %>
+  <% if @video_ticket.owner?(try_spree_current_user) && @video_ticket.active? %>
+    <%= button_link_to Spree.t(:close_ticket), support_video_ticket_path(@video_ticket), { method: :delete, class: "btn-danger", icon: 'delete', id: 'close_video_ticket_link' } %>
+  <% end %>
+<% end %>
+
+<div class="spree-ticket-info container">
+  <p class="col-sm-4">Customer Name: <%= @video_ticket.customer_name %></p>
+  <p class="col-sm-4">Customer Email: <%= @video_ticket.customer_email %></p>
+  <p class="col-sm-4">Status: <%= @video_ticket.status %></p>
+  <p class="col-sm-12">Purpose: <%= @video_ticket.purpose %></p>
+</div>
+
+<% if @video_ticket.owner?(try_spree_current_user) && @video_ticket.active? %>
+
+  <h3 id="spree-video-support-status">Chat Status: </h3>
+
+  <div id="spree-video-support-start" class="js-video-support-container">
+    <video id="spree-video-support-myvideo" autoplay muted></video>
+    <div id="spree-video-support-peervideo"></div>
+  </div>
+
+  <!-- Close Ticket Modal -->
+  <div class="modal fade" id="spree-close-support-ticket-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_for :spree_chat, url: support_video_ticket_path, method: :delete, remote: true, html: { id: 'js_video_support_close_form', data: { type: :json } } do |f| %>
+          <div class="modal-header">
+            <h4 class="modal-title">Close Ticket</h4>
+              <% if try_spree_current_user.blank? %>
+                <%= f.text_field :customer_first_name, placeholder: 'First Name', required: true %>
+                <%= f.text_field :customer_last_name, placeholder: 'Last Name' %>
+                <%= f.email_field :customer_email, placeholder: 'Email', required: true %>
+              <% else %>
+                <p>Hi User</p>
+              <% end %>
+              <%= f.text_field :purpose, placeholder: 'Purpose' %>
+              <%= f.submit 'Create Request' %>
+            
+            <button id="js_existing_ticket_btn" class="hidden">Resume Ticket</button>
+          </div>
+          <p id="spree-video-support-status"></p>
+          <div class="modal-body hidden js-video-support-request-container">
+            <p>Our support agent will appear here</p>
+
+            <div id="spree-video-support-start">
+              <video id="spree-video-support-myvideo" autoplay muted></video>
+              <div id="spree-video-support-peervideo"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        <% end %>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<% end %>

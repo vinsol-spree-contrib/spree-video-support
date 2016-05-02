@@ -1,0 +1,20 @@
+/*
+Placeholder manifest file.
+the installer will append this file to the app vendored assets here: 'vendor/assets/stylesheets/spree/frontend/all.css'
+*/
+
+video {
+  width: 200px;
+  height: 200px;
+  border: 1px solid white;
+  outline: 1px solid #ccc;
+  z-index: 5;
+}
+
+#myvideo {
+  transform: rotateY(-180deg);
+}
+
+#start {
+  display: none;
+}

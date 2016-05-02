@@ -1,0 +1,34 @@
+<div class="modal fade" id="spree-video-support-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Video Support</h4>
+        <%= form_for :spree_chat, url: video_support_request_index_path, method: :post, remote: true, html: { id: 'js_video_support_request_form', data: { type: :json }, class: 'hidden' } do |f| %>
+          <% if try_spree_current_user.blank? %>
+            <%= f.text_field :customer_first_name, placeholder: 'First Name', required: true %>
+            <%= f.text_field :customer_last_name, placeholder: 'Last Name' %>
+            <%= f.email_field :customer_email, placeholder: 'Email', required: true %>
+          <% else %>
+            <p>Hi User</p>
+          <% end %>
+          <%= f.text_field :purpose, placeholder: 'Purpose' %>
+          <%= f.submit 'Create Request' %>
+        <% end %>
+        <button id="js_existing_ticket_btn" class="hidden">Resume Ticket</button>
+        <button id="js_close_ticket_btn" class="hidden">Close Ticket</button>
+      </div>
+      <p id="spree-video-support-status"></p>
+      <div class="modal-body hidden js-video-support-request-container">
+        <p>Our support agent will appear here</p>
+
+        <div id="spree-video-support-start">
+          <video id="spree-video-support-myvideo" autoplay muted></video>
+          <div id="spree-video-support-peervideo"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,47 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:video_support_settings) %>
+<% end %>
+
+<%= form_tag admin_video_support_settings_url, method: :put do %>
+  <div id="preferences" data-hook>
+
+    <fieldset class="general no-border-top">
+
+      <div class="row">
+        <div class="col-md-12">
+
+          <%#-------------------------------------------------%>
+          <%# Skylink Api Keys                                %>
+          <%#-------------------------------------------------%>
+          <div class="panel panel-default security">
+            <div class="panel-heading">
+              <h1 class="panel-title">
+                <%= Spree.t(:video_support_settings_key)%>
+              </h1>
+            </div>
+
+            <div class="panel-body">
+              <% @preferences_video_support_settings.each do |key|
+                  type = Spree::Config.preference_type(key) %>
+                    <%= label_tag key do %>
+                      <%= Spree.t(key) %>
+                      <%= preference_field_tag(key, Spree::Config[key], type: type, size: 100) %>
+                      <br /><br />
+                    <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions" data-hook="buttons">
+        <%= button Spree.t('actions.update'), 'save' %>
+        <span class="or"><%= Spree.t(:or) %></span>
+        <%= button_link_to Spree.t('actions.cancel'), edit_admin_video_support_settings_url, icon: 'delete' %>
+      </div>
+
+    </fieldset>
+
+  </div>
+
+<% end %>

@@ -1,0 +1,278 @@
+//= require spree/support/skylink_video_support.js
+
+/*  -------------------------------------------------------------------------------------------------------------------
+  *=> Dependencies and Assumptions:
+    - Depends on Skylink Javascript SDK for WebRTC support.
+    - Also assumes that video support screen will be displayed in a bootstrap modal. Modal's ID is fetched from defaults.
+  *=> Process:
+    - TODO
+  *=> Arguments:
+    - $startButton - Call Support button which triggers video support.
+    - $form        - Form to create a support request ticket.
+    - $selfVideoElement - Video element for self stream view.
+    - $container   - Video support modal body.
+    - options      - Default options overrides.
+  ------------------------------------------------------------------------------------------------------------------ */
+// TODO: Load all the arguments from the modal itself. No need to pass individual arguments
+var CustomerVideoSupport  = function($startButton, $form, $selfVideoElement, $container, $existingTicketBtn, $closeTicketBtn, options) {
+  this.serviceResource = new SkylinkVideoSupport($selfVideoElement, $container.find('#spree-video-support-peervideo'), {
+                          $statusElement: $container.find('#spree-video-support-status')
+                        }); // Currently Skylink
+
+  this.$startButton       = $startButton;
+  this.$form              = $form;
+  this.$existingTicketBtn = $existingTicketBtn;
+  this.$closeTicketBtn    = $closeTicketBtn;
+  this.$container         = $container;
+  this.initialized        = false;
+  this.state              = null; // initiated, started, in_progress, closed, resumed, waiting
+
+  this.options = options || {};
+  this.options =  $.extend({}, this.defaults, this.options);
+
+  // Initialize
+  this.initialize();
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+// Section For Initialization
+// --------------------------------------------------------------------------------------------------------------------
+CustomerVideoSupport.prototype.initialize = function() {
+  var _this = this;
+
+  $(document).on('video_support:service_events_binded', function() {
+    _this.bindEvents();
+  });
+};
+
+CustomerVideoSupport.prototype.initializeService = function() {
+  this.serviceResource.initializeService();
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+// Section For Default Options
+// --------------------------------------------------------------------------------------------------------------------
+CustomerVideoSupport.prototype.defaults = {
+  videoSupportScreenModalIdentifier : '#spree-video-support-modal'
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+// Section For Instance Methods
+// --------------------------------------------------------------------------------------------------------------------
+CustomerVideoSupport.prototype.displayVideoSupportScreen = function() {
+  $(this.options.videoSupportScreenModalIdentifier).modal('show');
+  this.checkExistingTicket();
+};
+
+CustomerVideoSupport.prototype.showVideoRequestForm = function() {
+  this.$form.removeClass('hidden');
+  this.hideJoinExistingTicketButton();
+  this.hideVideoSupportContainer();
+  this.hideCloseTicketButton();
+};
+
+CustomerVideoSupport.prototype.hideVideoRequestForm = function() {
+  this.$form.addClass('hidden');
+};
+
+CustomerVideoSupport.prototype.showJoinExistingTicketButton = function() {
+  this.$existingTicketBtn.removeClass('hidden');
+  this.hideVideoRequestForm();
+  this.hideVideoSupportContainer();
+  this.showCloseTicketButton();
+};
+
+CustomerVideoSupport.prototype.hideJoinExistingTicketButton = function() {
+  this.$existingTicketBtn.addClass('hidden');
+};
+
+CustomerVideoSupport.prototype.showCloseTicketButton = function() {
+  this.$closeTicketBtn.removeClass('hidden');
+};
+
+CustomerVideoSupport.prototype.hideCloseTicketButton = function() {
+  this.$closeTicketBtn.addClass('hidden');
+};
+
+CustomerVideoSupport.prototype.showVideoSupportContainer = function() {
+  this.$container.removeClass('hidden');
+  this.hideVideoRequestForm();
+  this.hideJoinExistingTicketButton();
+};
+
+CustomerVideoSupport.prototype.hideVideoSupportContainer = function() {
+  this.$container.addClass('hidden');
+  this.serviceResource.stopStream();
+};
+
+CustomerVideoSupport.prototype.updateVideoStatus = function(message) {
+  this.serviceResource.updateVideoStatus(message);
+};
+
+CustomerVideoSupport.prototype.joinRoom = function(roomId) {
+  this.serviceResource.joinRoom(roomId);
+  this.showCloseTicketButton();
+};
+
+CustomerVideoSupport.prototype.leaveRoom = function() {
+  try {
+    this.serviceResource.leaveRoom();
+    this.hideCloseTicketButton();
+  } catch(err) {
+    console.log(err);
+  }
+};
+
+CustomerVideoSupport.prototype.checkExistingTicket = function() {
+  var _this = this;
+
+  _this.hideVideoRequestForm();
+  _this.updateVideoStatus('Checking active ticket');
+  $.ajax({
+    url: '<%= Spree::Core::Engine.routes.url_helpers.active_video_support_request_index_path %>',
+    type: 'GET',
+    data: {}
+  }).done(function (e, data, status, xhr) {
+    _this.hideVideoRequestForm();
+    _this.$existingTicketBtn.data('roomId', status.responseJSON.ticket_unique_id);
+    _this.showJoinExistingTicketButton();
+  }).fail(function (e, xhr, status, error) {
+    _this.showVideoRequestForm();
+    _this.hideJoinExistingTicketButton();
+    _this.hideCloseTicketButton();
+  });
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+// Section For Events Binding
+// --------------------------------------------------------------------------------------------------------------------
+CustomerVideoSupport.prototype.bindEvents = function() {
+  this.bindAgentStreamLostEvent();
+  this.bindJoinVideoSupportClickEvent();
+
+  this.bindFormSubmitEvent();
+  this.bindExistingTicketClickEvent();
+  this.bindCancelTicketClickEvent();
+
+  this.bindVideoSupportScreenCloseEvent();
+};
+
+CustomerVideoSupport.prototype.bindAgentStreamLostEvent = function() {
+  var _this = this;
+
+  $(document).on('video_support:stream_ended', function(event, serviceResource, peerId, peerInfo, isSelf, isScreensharing) {
+    if (!isSelf) {
+      _this.updateVideoStatus('Waiting for our agent to join back.');
+      $('#' + peerId).remove();
+    }
+  });
+};
+
+// 1. Display the support modal
+// 2. Initialize video support service
+CustomerVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
+  var _this = this;
+
+  this.$startButton.click(function() {
+    _this.displayVideoSupportScreen();
+    _this.initializeService();
+  });
+};
+
+// 1. Unbind form submit events
+// 2. Leave room only if already joined
+// 3. Reset the form and show it
+// 4. Hide the video support container
+// 5. : TODO : Maybe destroy request
+CustomerVideoSupport.prototype.bindVideoSupportScreenCloseEvent = function() {
+  var _this = this;
+
+  $(this.options.videoSupportScreenModalIdentifier).on('hidden.bs.modal', function (e) {
+    _this.leaveRoom();
+    _this.$form.off('ajax:success').off('ajax:error');
+    _this.$form.trigger('reset');
+    _this.hideVideoSupportContainer();
+    _this.$form.show();
+  });
+};
+
+// 1. Send request to create request -> Handled by `remote: true` option
+// 2. If success, show support container
+  // 2a. Display message that all agents are busy right now
+  // 2b. Rest will be handled by existing events
+  // 2c. Hide the form
+  // 2d. Join room with unique id returned
+// 3. If failure
+  // 3a. hide support container
+  // 3b. display error message
+CustomerVideoSupport.prototype.bindFormSubmitEvent = function() {
+  var _this = this;
+
+  this.$form.on('ajax:success', function(e, data, status, xhr) {
+    _this.showVideoSupportContainer();
+    _this.updateVideoStatus('Video support request received. Waiting for support agent to join in.');
+    _this.joinRoom(data.ticket_unique_id);
+  })
+  .on('ajax:error', function(e, xhr, status, error) {
+    _this.showVideoRequestForm();
+    _this.updateVideoStatus('Error creating ticket: ' + xhr.responseJSON.errors);
+  });
+};
+
+CustomerVideoSupport.prototype.bindExistingTicketClickEvent = function() {
+  var _this = this;
+
+  this.$existingTicketBtn.click(function() {
+    var  roomId = $(this).data('roomId');
+
+    if(!!roomId) {
+      _this.showVideoSupportContainer();
+      _this.updateVideoStatus('Joining existing ticket conversation.');
+      _this.joinRoom(roomId);
+    } else {
+      _this.showVideoRequestForm();
+      _this.updateVideoStatus('No existing ticket conversation.');
+    }
+  })
+};
+
+// Send request to close the ticket
+// 1. If success
+  // 1a. Hide video support
+  // 1b. Leave room
+  // 1c. Show form for new ticket
+  // 1d. Update status
+// 2. If error
+  // 2a. Update Status
+CustomerVideoSupport.prototype.bindCancelTicketClickEvent = function() {
+  var _this = this;
+
+  this.$closeTicketBtn.click(function() {
+    _this.updateVideoStatus('Closing active ticket');
+    $.ajax({
+      url: '<%= Spree::Core::Engine.routes.url_helpers.close_video_support_request_index_path %>',
+      type: 'DELETE'
+    }).done(function (e, data, status, xhr) {
+      _this.hideVideoSupportContainer();
+      _this.leaveRoom();
+      _this.showVideoRequestForm();
+      _this.updateVideoStatus('Ticket closed');
+    }).fail(function (e, xhr, status, error) {
+      _this.updateVideoStatus('Unable to close the ticket');
+    });
+  })
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+// Section to initialize the class on load
+// --------------------------------------------------------------------------------------------------------------------
+
+$(function() {
+  new CustomerVideoSupport($('.js-video-support-btn'),
+                            $('#js_video_support_request_form'),
+                            $('#spree-video-support-myvideo'),
+                            $('.js-video-support-request-container'),
+                            $('#js_existing_ticket_btn'),
+                            $('#js_close_ticket_btn')
+                          );
+});

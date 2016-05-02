@@ -1,0 +1,5 @@
+<% if can? :support_agent, Spree::SupportTicket %>
+  <ul class="nav nav-sidebar">
+    <%= main_menu_tree Spree.t(:video_ticket), icon: "th-large", sub_menu: "video", url: "#sidebar-video-chat-room" %>
+  </ul>
+<% end %>
