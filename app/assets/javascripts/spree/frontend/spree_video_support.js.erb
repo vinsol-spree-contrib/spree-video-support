@@ -8,24 +8,26 @@
     - TODO
   *=> Arguments:
     - $startButton - Call Support button which triggers video support.
-    - $form        - Form to create a support request ticket.
-    - $selfVideoElement - Video element for self stream view.
-    - $container   - Video support modal body.
+    - $supportContainer - Container which contains form to create ticket and also acts as a view for support
     - options      - Default options overrides.
   ------------------------------------------------------------------------------------------------------------------ */
 // TODO: Load all the arguments from the modal itself. No need to pass individual arguments
-var CustomerVideoSupport  = function($startButton, $form, $selfVideoElement, $container, $existingTicketBtn, $closeTicketBtn, options) {
-  this.serviceResource = new SkylinkVideoSupport($selfVideoElement, $container.find('#spree-video-support-peervideo'), {
-                          $statusElement: $container.find('#spree-video-support-status')
-                        }); // Currently Skylink
+var CustomerVideoSupport  = function($startButton, $supportContainer, options) {
 
   this.$startButton       = $startButton;
-  this.$form              = $form;
-  this.$existingTicketBtn = $existingTicketBtn;
-  this.$closeTicketBtn    = $closeTicketBtn;
-  this.$container         = $container;
+  this.$supportContainer  = $supportContainer;
+  this.$form              = this.$supportContainer.find('#js_video_support_request_form');
+  this.$selfVideoElement  = this.$supportContainer.find('#spree-video-support-myvideo');
+  this.$container         = this.$supportContainer.find('.js-video-support-request-container');
+  this.$existingTicketBtn = this.$supportContainer.find('#js_existing_ticket_btn');
+  this.$closeTicketBtn    = this.$supportContainer.find('#js_close_ticket_btn');
   this.initialized        = false;
   this.state              = null; // initiated, started, in_progress, closed, resumed, waiting
+
+   // Currently Skylink
+  this.serviceResource    = new SkylinkVideoSupport(this.$selfVideoElement, this.$supportContainer.find('#spree-video-support-peervideo'), {
+                              $statusElement: this.$supportContainer.find('#spree-video-support-status')
+                            });
 
   this.options = options || {};
   this.options =  $.extend({}, this.defaults, this.options);
@@ -269,10 +271,6 @@ CustomerVideoSupport.prototype.bindCancelTicketClickEvent = function() {
 
 $(function() {
   new CustomerVideoSupport($('.js-video-support-btn'),
-                            $('#js_video_support_request_form'),
-                            $('#spree-video-support-myvideo'),
-                            $('.js-video-support-request-container'),
-                            $('#js_existing_ticket_btn'),
-                            $('#js_close_ticket_btn')
+                            $('#spree-video-support-modal')
                           );
 });

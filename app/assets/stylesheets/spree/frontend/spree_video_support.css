@@ -3,18 +3,77 @@ Placeholder manifest file.
 the installer will append this file to the app vendored assets here: 'vendor/assets/stylesheets/spree/frontend/all.css'
 */
 
-video {
-  width: 200px;
-  height: 200px;
-  border: 1px solid white;
-  outline: 1px solid #ccc;
-  z-index: 5;
+.modal-open .modal.full-view-modal {
+  overflow: hidden;
+}
+.full-view-modal .modal-dialog{
+  min-width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  background: #fff;
+}
+.full-view-modal .support-status {
+  color: #1c5c92;
+}
+.full-view-modal button.close {
+  position: absolute;
+  right: 10px;
+  top: 20px;
+}
+.full-view-modal .modal-content {
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  padding: 10px 0;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  border:none;
+
+}
+.full-view-modal .modal-body {
+  height: calc(100vh - 66px);
+  overflow: hidden;
+  padding: 0;
+}
+.full-view-modal .modal-header {
+  padding-right: 40px;
+}
+.full-view-modal .btn-request-control {
+  position: relative;
+  top: -12px;
+}
+.full-view-modal .ticket-form {
+  margin-top: 50px;
+}
+.full-view-modal textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
-#myvideo {
-  transform: rotateY(-180deg);
+.full-view-modal  .js-video-support-request-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.full-view-modal  #spree-video-support-start,
+.full-view-modal  #spree-video-support-peervideo {
+  height: inherit;
+  width: inherit;
+  background: #000;
+}
+.full-view-modal  #spree-video-support-peervideo video {
+  min-width: 100%;
+  max-height: 100%;
 }
 
-#start {
-  display: none;
+.full-view-modal #spree-video-support-myvideo {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  width: 100px;
+  height: 100px;
+  border: solid 1px #5a5a5a;
 }

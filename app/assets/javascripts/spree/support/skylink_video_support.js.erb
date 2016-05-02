@@ -70,10 +70,10 @@ SkylinkVideoSupport.prototype.initializeService = function() {
 SkylinkVideoSupport.prototype.defaults = {
   $statusElement: null,
   messages: {
-    roomJoined: function() { return 'Joined Room' },
-    roomJoinError: function(error) { return ('Failed joining room.<br>' + 'Error: ' + (error.error.message || error.error)) },
+    roomJoined: function() { return 'Joined support' },
+    roomJoinError: function(error) { return ('Failed joining support.<br>' + 'Error: ' + (error.error.message || error.error)) },
     initializationFailed: function(error) { return ('Failed retrieval for room information.<br>Error: ' + (error.error.message || error.error)) },
-    initialized: function() { return 'Room information has been loaded. Room is ready for user to join.' }
+    initialized: function() { return 'Ready for support' }
   }
 };
 
@@ -86,9 +86,8 @@ SkylinkVideoSupport.config = {
 // --------------------------------------------------------------------------------------------------------------------
 SkylinkVideoSupport.prototype.getApiKey = function() {
   // Get your own key at developer.temasys.com.sg
-  // TODO: Temp adding main key here
-  // return '<%= Spree::Config["video_support_main_api_key"] %>';
-  return '97117c35-12d9-44f7-a0de-9b74ed75cafa'; // Privileged
+  return '<%= Spree::Config["video_support_main_api_key"] %>';
+  // return '97117c35-12d9-44f7-a0de-9b74ed75cafa'; // Privileged
   // return '<%= Spree::Config["video_support_alias_api_key"] %>';
 };
 

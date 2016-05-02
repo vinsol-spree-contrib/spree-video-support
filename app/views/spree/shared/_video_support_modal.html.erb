@@ -1,33 +1,41 @@
-<div class="modal fade" id="spree-video-support-modal" tabindex="-1" role="dialog">
+<div class="modal fade full-view-modal" id="spree-video-support-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Video Support</h4>
-        <%= form_for :spree_chat, url: video_support_request_index_path, method: :post, remote: true, html: { id: 'js_video_support_request_form', data: { type: :json }, class: 'hidden' } do |f| %>
+        <div class="modal-title h4 pull-left">
+          Video Support
+          <p class="support-status" id="spree-video-support-status"></p>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <div class="pull-right btn-request-control">
+          <button id="js_existing_ticket_btn" class="hidden btn btn-warning">Resume Ticket</button>
+          <button id="js_close_ticket_btn" class="hidden btn btn-danger">Close Ticket</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <%= form_for :spree_chat, url: video_support_request_index_path, method: :post, remote: true, html: { id: 'js_video_support_request_form', data: { type: :json }, class: 'hidden col-sm-6 col-sm-offset-3 ticket-form' } do |f| %>
+          <h2>Create Support Ticket</h2>
           <% if try_spree_current_user.blank? %>
-            <%= f.text_field :customer_first_name, placeholder: 'First Name', required: true %>
-            <%= f.text_field :customer_last_name, placeholder: 'Last Name' %>
-            <%= f.email_field :customer_email, placeholder: 'Email', required: true %>
+            <div class="form-group"><%= f.text_field :customer_first_name, placeholder: 'First Name', required: true, class: 'form-control' %></div>
+            <div class="form-group"><%= f.text_field :customer_last_name, placeholder: 'Last Name', class: 'form-control' %></div>
+            <div class="form-group"><%= f.email_field :customer_email, placeholder: 'Email', required: true, class: 'form-control' %></div>
           <% else %>
             <p>Hi User</p>
           <% end %>
-          <%= f.text_field :purpose, placeholder: 'Purpose' %>
-          <%= f.submit 'Create Request' %>
+          <div class="form-group"><%= f.text_area :purpose, placeholder: 'Purpose', class: 'form-control' %></div>
+          <%= f.submit 'Create Request', class: 'btn btn-primary' %>
         <% end %>
-        <button id="js_existing_ticket_btn" class="hidden">Resume Ticket</button>
-        <button id="js_close_ticket_btn" class="hidden">Close Ticket</button>
-      </div>
-      <p id="spree-video-support-status"></p>
-      <div class="modal-body hidden js-video-support-request-container">
-        <p>Our support agent will appear here</p>
 
-        <div id="spree-video-support-start">
-          <video id="spree-video-support-myvideo" autoplay muted></video>
-          <div id="spree-video-support-peervideo"></div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <article class="js-video-support-request-container" class="hidden">
+          <div id="spree-video-support-start">
+            <video id="spree-video-support-myvideo" autoplay muted></video>
+            <div id="spree-video-support-peervideo"></div>
+          </div>
+        </article>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
