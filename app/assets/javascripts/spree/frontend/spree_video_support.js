@@ -11,7 +11,6 @@
     - $supportContainer - Container which contains form to create ticket and also acts as a view for support
     - options      - Default options overrides.
   ------------------------------------------------------------------------------------------------------------------ */
-// TODO: Load all the arguments from the modal itself. No need to pass individual arguments
 var CustomerVideoSupport  = function($startButton, $supportContainer, options) {
 
   this.$startButton       = $startButton;

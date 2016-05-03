@@ -85,10 +85,7 @@ SkylinkVideoSupport.config = {
 // Section For Utility functions
 // --------------------------------------------------------------------------------------------------------------------
 SkylinkVideoSupport.prototype.getApiKey = function() {
-  // Get your own key at developer.temasys.com.sg
-  return '<%= Spree::Config["video_support_main_api_key"] %>';
-  // return '97117c35-12d9-44f7-a0de-9b74ed75cafa'; // Privileged
-  // return '<%= Spree::Config["video_support_alias_api_key"] %>';
+  return window.videoSupportMainApiKey;
 };
 
 SkylinkVideoSupport.prototype.getRoomId = function() {
