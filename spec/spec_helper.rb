@@ -31,8 +31,8 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/url_helpers'
 
-# Requires factories defined in lib/spree_video_support/factories.rb
-require 'spree_video_support/factories'
+# Requires factories defined in lib/spree_crm/factories.rb
+require 'spree_crm/factories'
 
 # Finds all the factories
 FactoryGirl.find_definitions
