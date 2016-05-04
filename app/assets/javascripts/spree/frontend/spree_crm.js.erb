@@ -1,4 +1,4 @@
-//= require spree/support/skylink_video_support.js
+//= require spree/shared/skylink_video_support.js
 
 /*  -------------------------------------------------------------------------------------------------------------------
   *=> Dependencies and Assumptions:

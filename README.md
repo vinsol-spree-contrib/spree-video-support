@@ -8,17 +8,17 @@ Introduction goes here.
 Installation
 ------------
 
-Add spree_video_support to your Gemfile:
+Add spree_crm to your Gemfile:
 
 ```ruby
-gem 'spree_video_support'
+gem 'spree_crm'
 ```
 
 Bundle your dependencies and run the installation generator:
 
 ```shell
 bundle
-bundle exec rails g spree_video_support:install
+bundle exec rails g spree_crm:install
 ```
 
 Testing
@@ -35,7 +35,7 @@ When testing your applications integration with this extension you may use it's 
 Simply add this require statement to your spec_helper:
 
 ```ruby
-require 'spree_video_support/factories'
+require 'spree_crm/factories'
 ```
 
 Copyright (c) 2016 [name of extension creator], released under the New BSD License
