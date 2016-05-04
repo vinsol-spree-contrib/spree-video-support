@@ -9,7 +9,7 @@ class CreateSpreeSupportTicket < ActiveRecord::Migration
       t.text :purpose, limit: 2000
       t.text :closing_remarks, limit: 2000
       t.references :closed_by, index: true
-      t.string :closed_by_email, index: true
+      t.string :closed_by_email
       t.boolean :active, default: true
       t.string :type
       t.string :unique_id

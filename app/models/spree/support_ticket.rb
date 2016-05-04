@@ -62,7 +62,7 @@ class Spree::SupportTicket < Spree::Base
     elsif user_or_email.is_a? Fixnum
       self.closed_by_id = user_or_email
     else
-      self.closed_by = user_or_email
+      self.closed_by_id = user_or_email.try(:id)
     end
     self.support_ended_at = DateTime.current
     self.active = false
