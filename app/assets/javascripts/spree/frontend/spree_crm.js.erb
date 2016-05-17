@@ -23,16 +23,16 @@ var CustomerVideoSupport  = function($startButton, $supportContainer, options) {
   this.initialized        = false;
   this.state              = null; // initiated, started, in_progress, closed, resumed, waiting
 
-   // Currently Skylink
-  this.serviceResource    = new SkylinkVideoSupport(this.$selfVideoElement, this.$supportContainer.find('#spree-video-support-peervideo'), {
-                              $statusElement: this.$supportContainer.find('#spree-video-support-status')
-                            });
-
   this.options = options || {};
   this.options =  $.extend({}, this.defaults, this.options);
 
   // Initialize
   this.initialize();
+
+   // Currently Skylink
+  this.serviceResource    = new SkylinkVideoSupport(this.$selfVideoElement, this.$supportContainer.find('#spree-video-support-peervideo'), {
+                              $statusElement: this.$supportContainer.find('#spree-video-support-status')
+                            });
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -44,10 +44,6 @@ CustomerVideoSupport.prototype.initialize = function() {
   $(document).on('video_support:service_events_binded', function() {
     _this.bindEvents();
   });
-};
-
-CustomerVideoSupport.prototype.initializeService = function() {
-  this.serviceResource.initializeService();
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -149,6 +145,7 @@ CustomerVideoSupport.prototype.checkExistingTicket = function() {
 // --------------------------------------------------------------------------------------------------------------------
 CustomerVideoSupport.prototype.bindEvents = function() {
   this.bindAgentStreamLostEvent();
+  this.bindPeerUpdatedEvent();
   this.bindJoinVideoSupportClickEvent();
 
   this.bindFormSubmitEvent();
@@ -169,6 +166,21 @@ CustomerVideoSupport.prototype.bindAgentStreamLostEvent = function() {
   });
 };
 
+CustomerVideoSupport.prototype.bindPeerUpdatedEvent = function() {
+  var _this = this;
+
+  $(document).on('video_support:peer_updated', function(event, serviceResource, peerId, peerInfo, isSelf, isScreensharing) {
+    if (!isSelf) {
+      if(peerInfo.userData.leavingRoom) {
+        _this.hideVideoSupportContainer();
+        _this.leaveRoom();
+        _this.showVideoRequestForm();
+        _this.updateVideoStatus('Ticket closed by our agent. You can create a new one now.');
+      }
+    }
+  });
+};
+
 // 1. Display the support modal
 // 2. Initialize video support service
 CustomerVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
@@ -176,7 +188,6 @@ CustomerVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
 
   this.$startButton.click(function() {
     _this.displayVideoSupportScreen();
-    _this.initializeService();
   });
 };
 

@@ -9,14 +9,16 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <% if @video_ticket.pickable? %>
-    <%= button_link_to Spree.t(:pick_ticket), support_video_ticket_path(@video_ticket), { method: :put, class: "btn-warning", icon: 'add', id: 'pick_video_ticket_link' } %>
-  <% elsif @video_ticket.owner?(try_spree_current_user) && @video_ticket.open? %>
-    <%= button_link_to Spree.t(:join_chat), start_support_video_ticket_path(@video_ticket), { remote: true, method: :put, class: "btn-success", id: 'join_video_ticket_link' } %>
-  <% end %>
-  <% if @video_ticket.owner?(try_spree_current_user) && @video_ticket.active? %>
-    <%= button_link_to Spree.t(:close_ticket), support_video_ticket_path(@video_ticket), { method: :delete, class: "btn-danger", icon: 'delete', id: 'close_video_ticket_link' } %>
-  <% end %>
+  <div class="js-ticket-actions">
+    <% if @video_ticket.pickable? %>
+      <%= button_link_to Spree.t(:pick_ticket), support_video_ticket_path(@video_ticket), { method: :put, class: "btn-warning", icon: 'add', id: 'pick_video_ticket_link' } %>
+    <% elsif @video_ticket.owner?(try_spree_current_user) && @video_ticket.open? %>
+      <%= button_link_to Spree.t(:join_chat), start_support_video_ticket_path(@video_ticket), { remote: true, method: :put, class: "btn-success", id: 'join_video_ticket_link' } %>
+    <% end %>
+    <% if @video_ticket.owner?(try_spree_current_user) && @video_ticket.active? %>
+      <%= button_link_to Spree.t(:close_ticket), support_video_ticket_path(@video_ticket), { remote: true, method: :delete, class: "btn-danger", icon: 'delete', id: 'close_video_ticket_link', data: { type: :json } } %>
+    <% end %>
+  </div>
 <% end %>
 
 <div class="spree-ticket-info container">
@@ -28,11 +30,13 @@
 
 <% if @video_ticket.owner?(try_spree_current_user) && @video_ticket.active? %>
 
-  <h3 id="spree-video-support-status">Chat Status: </h3>
+  <div class="js-video-support-container">
+    <h3 id="spree-video-support-status">Chat Status: </h3>
 
-  <div id="spree-video-support-start" class="js-video-support-container">
-    <video id="spree-video-support-myvideo" autoplay muted></video>
-    <div id="spree-video-support-peervideo"></div>
+    <div id="spree-video-support-start" class="js-video-container">
+      <video id="spree-video-support-myvideo" autoplay muted></video>
+      <div id="spree-video-support-peervideo"></div>
+    </div>
   </div>
 
   <!-- Close Ticket Modal -->

@@ -6,25 +6,29 @@
   *=> Process:
     - TODO
   *=> Arguments:
-    - $joinChatButton - Call Support button which triggers video support.
-    - $selfVideoElement - Video element for self stream view.
-    - $container   - Video support view container.
+    - $actionsContainer - Contains actions for interacting with ticket
+    - $supportContainer - Contains self and peer video elements
     - options      - Default options overrides.
   ------------------------------------------------------------------------------------------------------------------ */
-var AgentVideoSupport  = function($joinChatButton, $selfVideoElement, $container, options) {
-  this.serviceResource = new SkylinkVideoSupport($selfVideoElement, $container.find('#spree-video-support-peervideo'), {
-                          $statusElement: $container.find('#spree-video-support-status')
-                        }); // Currently Skylink
+var AgentVideoSupport  = function($actionsContainer, $supportContainer, options) {
+  this.$actionsContainer   = $actionsContainer;
+  this.$supportContainer   = $supportContainer;
+  this.$joinChatButton     = this.$actionsContainer.find('#join_video_ticket_link');
+  this.$closeChatButton    = this.$actionsContainer.find('#close_video_ticket_link');
+  this.$videoContainer     = this.$supportContainer.find('#spree-video-support-start');
+  this.$selfVideoElement   = this.$supportContainer.find('#spree-video-support-myvideo');
+  this.$peerVideoContainer = this.$supportContainer.find('#spree-video-support-peervideo');
 
-  this.$joinChatButton = $joinChatButton;
-  this.$container  = $container;
   this.initialized = false;
-
   this.options     = options || {};
   this.options     =  $.extend({}, this.defaults, this.options);
 
   // Initialize
   this.initialize();
+  this.serviceResource = new SkylinkVideoSupport(this.$selfVideoElement, this.$peerVideoContainer, {
+                          $statusElement: this.$supportContainer.find('#spree-video-support-status')
+                        }); // Currently Skylink
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -38,15 +42,10 @@ AgentVideoSupport.prototype.initialize = function() {
   });
 };
 
-AgentVideoSupport.prototype.initializeService = function() {
-  this.serviceResource.initializeService();
-};
-
 // --------------------------------------------------------------------------------------------------------------------
 // Section For Default Options
 // --------------------------------------------------------------------------------------------------------------------
 AgentVideoSupport.prototype.defaults = {
-  videoSupportScreenModalIdentifier : '#spree-video-support-modal'
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -64,12 +63,21 @@ AgentVideoSupport.prototype.leaveRoom = function() {
   this.serviceResource.leaveRoom();
 };
 
+AgentVideoSupport.prototype.showVideoSupportContainer = function() {
+  this.$supportContainer.removeClass('hidden');
+};
+
+AgentVideoSupport.prototype.hideVideoSupportContainer = function() {
+  this.$supportContainer.addClass('hidden');
+};
+
 // --------------------------------------------------------------------------------------------------------------------
 // Section For Events Binding
 // --------------------------------------------------------------------------------------------------------------------
 AgentVideoSupport.prototype.bindEvents = function() {
   this.bindAgentStreamLostEvent();
   this.bindJoinVideoSupportClickEvent();
+  this.bindCloseVideoSupportClickEvent();
 };
 
 AgentVideoSupport.prototype.bindAgentStreamLostEvent = function() {
@@ -93,14 +101,36 @@ AgentVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
   var _this = this;
 
   this.$joinChatButton.on('ajax:success', function(e, data, status, xhr) {
-    _this.$container.removeClass('hidden');
-    _this.initializeService();
+    _this.$supportContainer.removeClass('hidden');
     _this.updateVideoStatus('Joining video session with the customer.');
     _this.joinRoom(data.ticket_unique_id);
   })
   .on('ajax:error', function(e, xhr, status, error) {
-    _this.$container.addClass('hidden');
+    _this.$supportContainer.addClass('hidden');
     _this.updateVideoStatus('Error starting session: ' + xhr.responseJSON.errors);
+  });
+};
+
+// 1. If success.
+  // 1a. Stop the chat and signal it to customer
+  // 1b. Show message
+  // 1c. Refresh the page
+// 2. If error
+  // 2a. Display error message
+AgentVideoSupport.prototype.bindCloseVideoSupportClickEvent = function() {
+  var _this = this;
+
+  this.$closeChatButton.on('ajax:success', function(e, data, status, xhr) {
+    _this.hideVideoSupportContainer();
+    _this.serviceResource.setUserData({ leavingRoom: true });
+    _this.leaveRoom();
+    _this.serviceResource.serviceResource.stopStream();
+    _this.setUserData({ leavingRoom: false });
+    _this.updateVideoStatus('Ticket closed.');
+    window.location.reload();
+  })
+  .on('ajax:error', function(e, xhr, status, error) {
+    _this.updateVideoStatus('Error stopping session: ' + xhr.responseJSON.errors);
   });
 };
 
@@ -109,8 +139,7 @@ AgentVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
 // --------------------------------------------------------------------------------------------------------------------
 
 $(function() {
-  new AgentVideoSupport($('#join_video_ticket_link'),
-                          $('#spree-video-support-myvideo'),
+  new AgentVideoSupport(  $('.js-ticket-actions'),
                           $('.js-video-support-container')
                         );
 });
