@@ -42,6 +42,7 @@ SkylinkVideoSupport.prototype.loadServiceSDKAndInitialize = function() {
 
 SkylinkVideoSupport.prototype.setServiceLogLevel = function() {
   this.service.setLogLevel(4);
+  this.service.setDebugMode({ trace: false, storeLogs: true });
 };
 
 SkylinkVideoSupport.prototype.initializeService = function() {
@@ -126,6 +127,12 @@ SkylinkVideoSupport.prototype.joinRoom = function(roomId) {
   });
 };
 
+SkylinkVideoSupport.prototype.setUserData = function(data) {
+  var _this = this;
+
+  this.service.setUserData(data);
+};
+
 SkylinkVideoSupport.prototype.leaveRoom = function() {
   var _this = this;
 
@@ -154,6 +161,8 @@ SkylinkVideoSupport.prototype.bindEvents = function() {
   this.bindPeerUpdatedEvent();
   this.bindMediaAccessSuccessEvent();
   this.bindStreamEndedEvent();
+  this.bindSocketErrorEvent();
+  this.bindChannelRetryEvent();
 
   this.triggerEvent('service_events_binded', [this]);
 };
@@ -181,9 +190,16 @@ SkylinkVideoSupport.prototype.bindIncomingStreamEvent = function() {
 };
 
 SkylinkVideoSupport.prototype.bindPeerLeftEvent = function() {
+  var _this = this;
+
   this.service.on('peerLeft', function(peerId, peerInfo, isSelf) {
     // Only if user is in no room, remove the peer video element
     if (!isSelf && !peerInfo.room) {
+      if(peerInfo.userData.leavingRoom) {
+        _this.service.stopStream();
+        _this.service.leaveRoom();
+        _this.triggerEvent('peer_closed', [_this, peerId, peerInfo, isSelf]);
+      }
       $('#' + peerId).remove();
     }
   });
@@ -209,5 +225,21 @@ SkylinkVideoSupport.prototype.bindMediaAccessSuccessEvent = function() {
 
   this.service.on('mediaAccessSuccess', function(stream) {
     attachMediaStream(_this.$selfVideoElement.get(0), stream);
+  });
+};
+
+SkylinkVideoSupport.prototype.bindSocketErrorEvent = function() {
+  var _this = this;
+
+  this.service.on('socketError', function(errorCode, error, type) {
+    console.warn('[SkylinkVideoSupport] Socket Error: Error Code=' + errorCode + ' - Type=' + type + ' - Error: ' + error);
+  });
+};
+
+SkylinkVideoSupport.prototype.bindChannelRetryEvent = function() {
+  var _this = this;
+
+  this.service.on('channelRetry', function(fallbackType, currentAttempt) {
+    console.warn('[SkylinkVideoSupport] Channel Retry: Fallback Type=' + fallbackType + ' - Attempts=' + currentAttempt);
   });
 };

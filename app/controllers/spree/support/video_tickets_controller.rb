@@ -30,9 +30,15 @@ class Spree::Support::VideoTicketsController < Spree::Support::BaseController
 
   def destroy
     if @video_ticket.end(try_spree_current_user)
-      redirect_to support_video_ticket_path(@video_ticket)
+      respond_to do |format|
+        format.html { redirect_to support_video_ticket_path(@video_ticket) }
+        format.json { render json: { success: true }, status: 200 }
+      end
     else
-      render :show
+      respond_to do |format|
+        format.html { render :show }
+        format.json { render json: { success: false }, status: 400 }
+      end
     end
   end
 

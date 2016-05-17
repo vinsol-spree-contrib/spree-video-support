@@ -23,16 +23,16 @@ var CustomerVideoSupport  = function($startButton, $supportContainer, options) {
   this.initialized        = false;
   this.state              = null; // initiated, started, in_progress, closed, resumed, waiting
 
-   // Currently Skylink
-  this.serviceResource    = new SkylinkVideoSupport(this.$selfVideoElement, this.$supportContainer.find('#spree-video-support-peervideo'), {
-                              $statusElement: this.$supportContainer.find('#spree-video-support-status')
-                            });
-
   this.options = options || {};
   this.options =  $.extend({}, this.defaults, this.options);
 
   // Initialize
   this.initialize();
+
+   // Currently Skylink
+  this.serviceResource    = new SkylinkVideoSupport(this.$selfVideoElement, this.$supportContainer.find('#spree-video-support-peervideo'), {
+                              $statusElement: this.$supportContainer.find('#spree-video-support-status')
+                            });
 }
 
 // --------------------------------------------------------------------------------------------------------------------

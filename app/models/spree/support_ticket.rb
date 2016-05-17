@@ -110,7 +110,7 @@ class Spree::SupportTicket < Spree::Base
     end
 
     def support_agent_role
-      if support_agent && !support_agent.has_spree_role?('support_agent')
+      if support_agent && (['support_agent', 'admin'] & support_agent.spree_roles.pluck(:name)).blank?
         errors[:support_agent] << 'does not has support agent role'
       end
     end
