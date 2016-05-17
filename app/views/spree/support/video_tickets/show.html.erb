@@ -16,7 +16,7 @@
       <%= button_link_to Spree.t(:join_chat), start_support_video_ticket_path(@video_ticket), { remote: true, method: :put, class: "btn-success", id: 'join_video_ticket_link' } %>
     <% end %>
     <% if @video_ticket.owner?(try_spree_current_user) && @video_ticket.active? %>
-      <%= button_link_to Spree.t(:close_ticket), support_video_ticket_path(@video_ticket), { remote: true, method: :delete, class: "btn-danger", icon: 'delete', id: 'close_video_ticket_link' } %>
+      <%= button_link_to Spree.t(:close_ticket), support_video_ticket_path(@video_ticket), { remote: true, method: :delete, class: "btn-danger", icon: 'delete', id: 'close_video_ticket_link', data: { type: :json } } %>
     <% end %>
   </div>
 <% end %>

@@ -45,13 +45,13 @@ SkylinkVideoSupport.prototype.setServiceLogLevel = function() {
   this.service.setDebugMode({ trace: false, storeLogs: true });
 };
 
-SkylinkVideoSupport.prototype.initializeService = function() {
+SkylinkVideoSupport.prototype.initializeService = function(roomId, callback) {
   var _this = this;
 
   if (!this.initialized) {
     this.service.init({
       apiKey: _this.getApiKey(),
-      defaultRoom: _this.getRoomId()
+      defaultRoom: roomId || _this.getRoomId()
     }, function (error, success) {
       if (error) {
         _this.triggerEvent('initialization_failed', [_this]);
@@ -60,6 +60,7 @@ SkylinkVideoSupport.prototype.initializeService = function() {
         _this.initialized = true;
         _this.triggerEvent('initialized', [_this]);
         _this.updateVideoStatus(_this.options.messages.initialized());
+        callback.bind(_this).call();
       }
     });
   }
@@ -113,18 +114,21 @@ SkylinkVideoSupport.prototype.joinRoom = function(roomId) {
   console.log('[SkylinkVideoSupport] Room ID: ' + roomId);
   if (!roomId) { return; }
 
-  this.service.joinRoom(roomId, {
-    audio: true,
-    video: true
-  }, function (error, success) {
-    if (error) {
-      _this.updateVideoStatus(_this.options.messages.roomJoinError(error));
-      _this.triggerEvent('room_joined_error', [_this, error]);
-    } else {
-      _this.updateVideoStatus(_this.options.messages.roomJoined());
-      _this.triggerEvent('room_joined', [_this, success]);
-    }
+  this.initializeService(roomId, function() {
+    _this.service.joinRoom(roomId, {
+      audio: true,
+      video: true
+    }, function (error, success) {
+      if (error) {
+        _this.updateVideoStatus(_this.options.messages.roomJoinError(error));
+        _this.triggerEvent('room_joined_error', [_this, error]);
+      } else {
+        _this.updateVideoStatus(_this.options.messages.roomJoined());
+        _this.triggerEvent('room_joined', [_this, success]);
+      }
+    });
   });
+
 };
 
 SkylinkVideoSupport.prototype.setUserData = function(data) {

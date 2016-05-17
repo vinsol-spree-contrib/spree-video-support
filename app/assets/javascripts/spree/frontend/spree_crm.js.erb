@@ -46,10 +46,6 @@ CustomerVideoSupport.prototype.initialize = function() {
   });
 };
 
-CustomerVideoSupport.prototype.initializeService = function() {
-  this.serviceResource.initializeService();
-};
-
 // --------------------------------------------------------------------------------------------------------------------
 // Section For Default Options
 // --------------------------------------------------------------------------------------------------------------------
@@ -149,6 +145,7 @@ CustomerVideoSupport.prototype.checkExistingTicket = function() {
 // --------------------------------------------------------------------------------------------------------------------
 CustomerVideoSupport.prototype.bindEvents = function() {
   this.bindAgentStreamLostEvent();
+  this.bindPeerUpdatedEvent();
   this.bindJoinVideoSupportClickEvent();
 
   this.bindFormSubmitEvent();
@@ -169,6 +166,21 @@ CustomerVideoSupport.prototype.bindAgentStreamLostEvent = function() {
   });
 };
 
+CustomerVideoSupport.prototype.bindPeerUpdatedEvent = function() {
+  var _this = this;
+
+  $(document).on('video_support:peer_updated', function(event, serviceResource, peerId, peerInfo, isSelf, isScreensharing) {
+    if (!isSelf) {
+      if(peerInfo.userData.leavingRoom) {
+        _this.hideVideoSupportContainer();
+        _this.leaveRoom();
+        _this.showVideoRequestForm();
+        _this.updateVideoStatus('Ticket closed by our agent. You can create a new one now.');
+      }
+    }
+  });
+};
+
 // 1. Display the support modal
 // 2. Initialize video support service
 CustomerVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
@@ -176,7 +188,6 @@ CustomerVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
 
   this.$startButton.click(function() {
     _this.displayVideoSupportScreen();
-    _this.initializeService();
   });
 };
 

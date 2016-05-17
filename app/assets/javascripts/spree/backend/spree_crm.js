@@ -42,10 +42,6 @@ AgentVideoSupport.prototype.initialize = function() {
   });
 };
 
-AgentVideoSupport.prototype.initializeService = function() {
-  this.serviceResource.initializeService();
-};
-
 // --------------------------------------------------------------------------------------------------------------------
 // Section For Default Options
 // --------------------------------------------------------------------------------------------------------------------
@@ -106,7 +102,6 @@ AgentVideoSupport.prototype.bindJoinVideoSupportClickEvent = function() {
 
   this.$joinChatButton.on('ajax:success', function(e, data, status, xhr) {
     _this.$supportContainer.removeClass('hidden');
-    _this.initializeService();
     _this.updateVideoStatus('Joining video session with the customer.');
     _this.joinRoom(data.ticket_unique_id);
   })
@@ -127,9 +122,9 @@ AgentVideoSupport.prototype.bindCloseVideoSupportClickEvent = function() {
 
   this.$closeChatButton.on('ajax:success', function(e, data, status, xhr) {
     _this.hideVideoSupportContainer();
-    _this.setUserData({ leavingRoom: true });
+    _this.serviceResource.setUserData({ leavingRoom: true });
     _this.leaveRoom();
-    _this.serviceResource.stopStream();
+    _this.serviceResource.serviceResource.stopStream();
     _this.setUserData({ leavingRoom: false });
     _this.updateVideoStatus('Ticket closed.');
     window.location.reload();
