@@ -48,22 +48,20 @@ SkylinkVideoSupport.prototype.setServiceLogLevel = function() {
 SkylinkVideoSupport.prototype.initializeService = function(roomId, callback) {
   var _this = this;
 
-  if (!this.initialized) {
-    this.service.init({
-      apiKey: _this.getApiKey(),
-      defaultRoom: roomId || _this.getRoomId()
-    }, function (error, success) {
-      if (error) {
-        _this.triggerEvent('initialization_failed', [_this]);
-        _this.updateVideoStatus(_this.options.messages.initializationFailed(error));
-      } else {
-        _this.initialized = true;
-        _this.triggerEvent('initialized', [_this]);
-        _this.updateVideoStatus(_this.options.messages.initialized());
-        callback.bind(_this).call();
-      }
-    });
-  }
+  this.service.init({
+    apiKey: _this.getApiKey(),
+    defaultRoom: roomId || _this.getRoomId()
+  }, function (error, success) {
+    if (error) {
+      _this.triggerEvent('initialization_failed', [_this]);
+      _this.updateVideoStatus(_this.options.messages.initializationFailed(error));
+    } else {
+      _this.initialized = true;
+      _this.triggerEvent('initialized', [_this]);
+      _this.updateVideoStatus(_this.options.messages.initialized());
+      callback.bind(_this).call();
+    }
+  });
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -75,7 +73,8 @@ SkylinkVideoSupport.prototype.defaults = {
     roomJoined: function() { return 'Joined support' },
     roomJoinError: function(error) { return ('Failed joining support.<br>' + 'Error: ' + (error.error.message || error.error)) },
     initializationFailed: function(error) { return ('Failed retrieval for room information.<br>Error: ' + (error.error.message || error.error)) },
-    initialized: function() { return 'Ready for support' }
+    initialized: function() { return 'Ready for support' },
+    peerJoined: function() { return 'Active' }
   }
 };
 
@@ -180,8 +179,8 @@ SkylinkVideoSupport.prototype.bindPeerJoinedEvent = function() {
     vid.autoplay = true;
     vid.muted = false; // Added to avoid feedback when testing locally
     vid.id = peerId;
-
-    _this.$peerVideoElementContainer.append(vid);
+    _this.updateVideoStatus(_this.options.messages.peerJoined());
+    _this.$peerVideoElementContainer.prepend(vid);
   });
 };
 

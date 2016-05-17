@@ -31,7 +31,9 @@
         <article class="js-video-support-request-container" class="hidden">
           <div id="spree-video-support-start">
             <video id="spree-video-support-myvideo" autoplay muted></video>
-            <div id="spree-video-support-peervideo"></div>
+            <div id="spree-video-support-peervideo" class="text-center">
+              <%= image_tag 'spree/loading_support.gif', class: 'video-loading-img' %>
+            </div>
           </div>
         </article>
       </div>
