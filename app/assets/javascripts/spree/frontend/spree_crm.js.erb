@@ -125,19 +125,23 @@ CustomerVideoSupport.prototype.checkExistingTicket = function() {
 
   _this.hideVideoRequestForm();
   _this.updateVideoStatus('Checking active ticket');
-  $.ajax({
-    url: '<%= Spree::Core::Engine.routes.url_helpers.active_video_support_request_index_path %>',
-    type: 'GET',
-    data: {}
-  }).done(function (e, data, status, xhr) {
-    _this.hideVideoRequestForm();
-    _this.$existingTicketBtn.data('roomId', status.responseJSON.ticket_unique_id);
-    _this.showJoinExistingTicketButton();
-  }).fail(function (e, xhr, status, error) {
-    _this.showVideoRequestForm();
-    _this.hideJoinExistingTicketButton();
-    _this.hideCloseTicketButton();
-  });
+  try {
+    $.ajax({
+      url: '<%= Spree::Core::Engine.routes.url_helpers.active_video_support_request_index_path %>',
+      type: 'GET',
+      data: {}
+    }).done(function (e, data, status, xhr) {
+      _this.hideVideoRequestForm();
+      _this.$existingTicketBtn.data('roomId', status.responseJSON.ticket_unique_id);
+      _this.showJoinExistingTicketButton();
+    }).fail(function (e, xhr, status, error) {
+      _this.showVideoRequestForm();
+      _this.hideJoinExistingTicketButton();
+      _this.hideCloseTicketButton();
+    });
+  } catch(error) {
+    console.log(error);
+  }
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -220,15 +224,19 @@ CustomerVideoSupport.prototype.bindVideoSupportScreenCloseEvent = function() {
 CustomerVideoSupport.prototype.bindFormSubmitEvent = function() {
   var _this = this;
 
-  this.$form.on('ajax:success', function(e, data, status, xhr) {
-    _this.showVideoSupportContainer();
-    _this.updateVideoStatus('Video support request received. Waiting for support agent to join in.');
-    _this.joinRoom(data.ticket_unique_id);
-  })
-  .on('ajax:error', function(e, xhr, status, error) {
-    _this.showVideoRequestForm();
-    _this.updateVideoStatus('Error creating ticket: ' + xhr.responseJSON.errors);
-  });
+  try {
+    this.$form.on('ajax:success', function(e, data, status, xhr) {
+      _this.showVideoSupportContainer();
+      _this.updateVideoStatus('Video support request received. Waiting for support agent to join in.');
+      _this.joinRoom(data.ticket_unique_id);
+    })
+    .on('ajax:error', function(e, xhr, status, error) {
+      _this.showVideoRequestForm();
+      _this.updateVideoStatus('Error creating ticket: ' + xhr.responseJSON.errors);
+    });
+  } catch(error) {
+    console.log(error);
+  }
 };
 
 CustomerVideoSupport.prototype.bindExistingTicketClickEvent = function() {
@@ -261,17 +269,21 @@ CustomerVideoSupport.prototype.bindCancelTicketClickEvent = function() {
 
   this.$closeTicketBtn.click(function() {
     _this.updateVideoStatus('Closing active ticket');
-    $.ajax({
-      url: '<%= Spree::Core::Engine.routes.url_helpers.close_video_support_request_index_path %>',
-      type: 'DELETE'
-    }).done(function (e, data, status, xhr) {
-      _this.hideVideoSupportContainer();
-      _this.leaveRoom();
-      _this.showVideoRequestForm();
-      _this.updateVideoStatus('Ticket closed');
-    }).fail(function (e, xhr, status, error) {
-      _this.updateVideoStatus('Unable to close the ticket');
-    });
+    try {
+      $.ajax({
+        url: '<%= Spree::Core::Engine.routes.url_helpers.close_video_support_request_index_path %>',
+        type: 'DELETE'
+      }).done(function (e, data, status, xhr) {
+        _this.hideVideoSupportContainer();
+        _this.leaveRoom();
+        _this.showVideoRequestForm();
+        _this.updateVideoStatus('Ticket closed');
+      }).fail(function (e, xhr, status, error) {
+        _this.updateVideoStatus('Unable to close the ticket');
+      });
+    } catch(error) {
+      console.log(error);
+    }
   })
 };
 

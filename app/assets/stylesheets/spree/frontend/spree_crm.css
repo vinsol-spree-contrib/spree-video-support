@@ -77,3 +77,13 @@ the installer will append this file to the app vendored assets here: 'vendor/ass
   height: 100px;
   border: solid 1px #5a5a5a;
 }
+.video-loading-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -64px;
+  margin-top: -7px;
+}
+.full-view-modal #spree-video-support-peervideo video ~ .video-loading-img {
+  display: none;
+}
