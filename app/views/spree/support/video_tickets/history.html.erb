@@ -1,0 +1,30 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:video_tickets) %>
+<% end %>
+
+<% if @tickets.any? %>
+  <table class="table" id='listing_video_tickets' data-hook>
+    <thead>
+      <tr data-hook="prototypes_header">
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:email) %></th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tickets.each do |video_ticket| %>
+        <tr data-hook="video_ticket_row">
+          <td><%= video_ticket.customer_name %></td>
+          <td><%= video_ticket.customer_email %></td>
+          <td class="actions actions-2 text-right">
+            <%= button_link_to Spree.t(:view), support_video_ticket_path(video_ticket), { class: "btn-success", id: 'join_video_chat_link'} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::SupportTicket)) %>
+  </div>
+<% end %>

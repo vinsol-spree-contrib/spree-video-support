@@ -1,0 +1,14 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  hello: "Hello world"
+  spree:
+    video_support_settings:  Video Support Settings
+    active_video_ticket: Active Video Ticket
+    inactive_video_ticket: Inactive Video Ticket
+    video_tickets: Video Support Tickets
+    close_ticket: Close Ticket
+    video_ticket: Video
+    pick_ticket: Pick Ticket
+    join_chat: Join Chat
