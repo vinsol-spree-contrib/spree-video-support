@@ -2,7 +2,7 @@ module SpreeVideoSupport
   class Engine < Rails::Engine
     require 'spree/core'
     isolate_namespace Spree
-    engine_name 'spree_crm'
+    engine_name 'spree_video_support'
 
     # use rspec for tests
     config.generators do |g|

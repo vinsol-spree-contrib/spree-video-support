@@ -27,7 +27,7 @@ describe Spree::SupportTicket, type: :model do
 
         describe '#support_agent_role' do
           it 'ensures support agent has valid role' do
-            expect(subject.valid?).to be_falsy
+            expect(subject.valid?).to be_truthy
           end
         end
       end
