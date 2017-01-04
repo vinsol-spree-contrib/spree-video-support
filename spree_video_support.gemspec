@@ -1,7 +1,7 @@
 # encoding: UTF-8
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_crm'
+  s.name        = 'spree_video_support'
   s.version     = '3.0.4'
   s.summary     = 'Adds video support for spree customers'
   s.description = 'Adds video support for spree customers'

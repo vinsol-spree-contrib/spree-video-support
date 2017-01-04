@@ -1,25 +1,33 @@
-# spree-crm
-=======
 SpreeVideoSupport
 =================
 
-Introduction goes here.
+SpreeVideoSupport video enhances your Spree Ecommerce site by providing instant video support feature. This feature allows customer to raise a ticket and can ask for video chat. Once a customer has initiated the request for video chat, admin will be able to respond to the request and start the chat.
+
+This extension uses [temasys](https://www.temasys.io/) to provide video support.
+
+Admins marked as support agent will be able to respond to video requests
 
 Installation
 ------------
 
-Add spree_crm to your Gemfile:
+Add spree_video_support to your Gemfile:
 
 ```ruby
-gem 'spree_crm'
+gem 'spree_video_support'
 ```
 
 Bundle your dependencies and run the installation generator:
 
 ```shell
 bundle
-bundle exec rails g spree_crm:install
+bundle exec rails g spree_video_support:install
 ```
+
+Usage
+--------
+* Get API keys from [temasys](https://www.temasys.io/).
+* Add these keys 'Video Support Settings' page under Configuration section in Admin panel.
+* To mark an admin as "support agent" go to the edit page of the admin and give him "SUPPORT_AGENT" role.
 
 Testing
 -------
@@ -35,7 +43,12 @@ When testing your applications integration with this extension you may use it's 
 Simply add this require statement to your spec_helper:
 
 ```ruby
-require 'spree_crm/factories'
+require 'spree_video_support/factories'
 ```
 
-Copyright (c) 2016 [name of extension creator], released under the New BSD License
+Credits
+-------
+
+[![vinsol.com: Ruby on Rails, iOS and Android developers](http://vinsol.com/vin_logo.png "Ruby on Rails, iOS and Android developers")](http://vinsol.com)
+
+Copyright (c) 2016 [vinsol.com](http://vinsol.com "Ruby on Rails, iOS and Android developers"), released under the New MIT License
