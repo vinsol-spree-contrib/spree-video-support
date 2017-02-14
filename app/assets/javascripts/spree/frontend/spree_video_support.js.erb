@@ -205,7 +205,7 @@ CustomerVideoSupport.prototype.bindVideoSupportScreenCloseEvent = function() {
 
   $(this.options.videoSupportScreenModalIdentifier).on('hidden.bs.modal', function (e) {
     _this.leaveRoom();
-    _this.$form.off('ajax:success').off('ajax:error');
+    //_this.$form.off('ajax:success').off('ajax:error');
     _this.$form.trigger('reset');
     _this.hideVideoSupportContainer();
     _this.$form.show();
