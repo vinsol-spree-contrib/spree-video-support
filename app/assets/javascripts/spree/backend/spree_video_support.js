@@ -124,8 +124,8 @@ AgentVideoSupport.prototype.bindCloseVideoSupportClickEvent = function() {
     _this.hideVideoSupportContainer();
     _this.serviceResource.setUserData({ leavingRoom: true });
     _this.leaveRoom();
-    _this.serviceResource.serviceResource.stopStream();
-    _this.setUserData({ leavingRoom: false });
+    _this.serviceResource.stopStream();
+    _this.serviceResource.setUserData({ leavingRoom: false });
     _this.updateVideoStatus('Ticket closed.');
     window.location.reload();
   })
