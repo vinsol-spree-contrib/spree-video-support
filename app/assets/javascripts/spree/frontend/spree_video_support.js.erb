@@ -205,7 +205,7 @@ CustomerVideoSupport.prototype.bindVideoSupportScreenCloseEvent = function() {
 
   $(this.options.videoSupportScreenModalIdentifier).on('hidden.bs.modal', function (e) {
     _this.leaveRoom();
-    _this.$form.off('ajax:success').off('ajax:error');
+    //_this.$form.off('ajax:success').off('ajax:error');
     _this.$form.trigger('reset');
     _this.hideVideoSupportContainer();
     _this.$form.show();
@@ -279,7 +279,10 @@ CustomerVideoSupport.prototype.bindCancelTicketClickEvent = function() {
         _this.showVideoRequestForm();
         _this.updateVideoStatus('Ticket closed');
       }).fail(function (e, xhr, status, error) {
-        _this.updateVideoStatus('Unable to close the ticket');
+        _this.hideVideoSupportContainer();
+        _this.leaveRoom();
+        _this.showVideoRequestForm();
+        _this.updateVideoStatus('Something went wrong. Try creating a new support ticket');
       });
     } catch(error) {
       console.log(error);
