@@ -1,4 +1,4 @@
-class CreateSpreeSupportTicket < ActiveRecord::Migration
+class CreateSpreeSupportTicket < SpreeExtension::Migration[4.2]
   def change
     create_table :spree_support_tickets do |t|
       t.references :support_agent, index: true
