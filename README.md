@@ -7,13 +7,21 @@ This extension uses [temasys](https://www.temasys.io/) to provide video support.
 
 Admins marked as support agent will be able to respond to video requests
 
+Demo
+----
+Try Spree Video Support with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vinsol-spree-contrib/spree-demo-heroku/tree/spree-video-support)
+
+Make sure you add Temasys API keys in Video Support Settings under Configuration from Admin end.
+
 Installation
 ------------
 
 Add spree_video_support to your Gemfile:
 
 ```ruby
-gem 'spree_video_support'
+gem 'spree_video_support', github: 'vinsol-spree-contrib/spree-video-support'
 ```
 
 Bundle your dependencies and run the installation generator:
