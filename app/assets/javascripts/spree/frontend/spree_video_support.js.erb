@@ -127,7 +127,7 @@ CustomerVideoSupport.prototype.checkExistingTicket = function() {
   _this.updateVideoStatus('Checking active ticket');
   try {
     $.ajax({
-      url: '<%= Spree::Core::Engine.routes.url_helpers.active_video_support_request_index_url %>',
+      url: '<%= Spree::Core::Engine.routes.url_helpers.active_video_support_request_index_path %>',
       type: 'GET',
       data: {}
     }).done(function (e, data, status, xhr) {
@@ -271,7 +271,7 @@ CustomerVideoSupport.prototype.bindCancelTicketClickEvent = function() {
     _this.updateVideoStatus('Closing active ticket');
     try {
       $.ajax({
-        url: '<%= Spree::Core::Engine.routes.url_helpers.close_video_support_request_index_url %>',
+        url: '<%= Spree::Core::Engine.routes.url_helpers.close_video_support_request_index_path %>',
         type: 'DELETE'
       }).done(function (e, data, status, xhr) {
         _this.hideVideoSupportContainer();
