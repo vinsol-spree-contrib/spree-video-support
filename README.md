@@ -7,14 +7,41 @@ This extension uses [temasys](https://www.temasys.io/) to provide video support.
 
 Admins marked as support agent will be able to respond to video requests
 
+Demo
+----
+Try Spree Video Support for Spree master with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vinsol-spree-contrib/spree-demo-heroku/tree/spree-video-support-master)
+
+Try Spree Video Support for Spree 3-4 with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vinsol-spree-contrib/spree-demo-heroku/tree/spree-video-support-3-4)
+
+Try Spree Video Support for Spree 3-1 with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vinsol-spree-contrib/spree-demo-heroku/tree/spree-video-support-3-1)
+
+NOTE:Make sure you add Temasys API keys in Video Support Settings under Configuration from Admin section.
+
 Installation
 ------------
 
-Add spree_video_support to your Gemfile:
+Add spree_video_support to your Gemfile with this line:
 
-```ruby
-gem 'spree_video_support'
-```
+  #### Spree >= 3.1
+
+  ```ruby
+  gem 'spree_video_support', github: 'vinsol-spree-contrib/spree-video-support'
+  ```
+
+  #### Spree < 3.1
+
+  ```ruby
+  gem 'spree_video_support', github: 'vinsol-spree-contrib/spree-video-support', branch: 'X-X-stable'
+  ```
+
+  The `branch` option is important: it must match the version of Spree you're using.
+  For example, use `3-0-stable` if you're using Spree `3-0-stable` or any `3.0.x` version.
 
 Bundle your dependencies and run the installation generator:
 
@@ -27,7 +54,8 @@ Usage
 --------
 * Get API keys from [temasys](https://www.temasys.io/).
 * Add these keys 'Video Support Settings' page under Configuration section in Admin panel.
-* To mark an admin as "support agent" go to the edit page of the admin and give him "SUPPORT_AGENT" role.
+* To mark user as "support agent" go to the edit page of the user and give him "SUPPORT_AGENT" role.
+* To reach the Support Interface, first log into your store with your support agent account, then go to the /support directory of your site.
 
 Testing
 -------
